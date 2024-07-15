@@ -28,9 +28,11 @@
   },
   "GET /api/articles/:article_id": {
     "description": "Gets an article by its ID",
+    "queries": [],
     "parameters": {
       "article_id": "The ID of the article to retrieve (integer)"
     },
+    
     "exampleResponse": {
       "article": {
         "author": "butter_bridge",
