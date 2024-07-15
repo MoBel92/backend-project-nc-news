@@ -1,5 +1,5 @@
 const { request, response } = require("../app");
-const { fetchTopics } = require("../model/nc-models");
+const { fetchTopics, fetchArticleById } = require("../model/nc-models");
 const fs = require("fs").promises;
 
 const getTopics = (request, response, next) => {
@@ -25,4 +25,16 @@ const getEndpoints = (request, response, next) => {
     .catch(next);
 };
 
-module.exports = { getTopics, getEndpoints };
+const getArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  fetchArticleById(article_id)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+};
+
+module.exports = { getTopics, getEndpoints, getArticleById };
