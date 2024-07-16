@@ -28,6 +28,15 @@ describe("GET /api/topics", () => {
         });
       });
   });
+
+  test("404: responds with an error message when URL is not found", () => {
+    return request(app)
+      .get("/api/not-a-valid-url")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      });
+  });
 });
 
 describe("GET /api", () => {
