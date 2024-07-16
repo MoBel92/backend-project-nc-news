@@ -1,7 +1,10 @@
-const { request, response } = require("../app");
-const { fetchTopics, fetchArticleById } = require("../model/nc-models");
+const {
+  fetchTopics,
+  fetchArticleById,
+  fetchArticles,
+} = require("../model/nc-models");
 const fs = require("fs").promises;
-
+//console.log(typeof fetchArticles);
 const getTopics = (request, response, next) => {
   fetchTopics()
     .then((topics) => {
@@ -35,4 +38,16 @@ const getArticleById = (req, res, next) => {
     });
 };
 
-module.exports = { getTopics, getEndpoints, getArticleById };
+const getArticles = (request, response, next) => {
+  fetchArticles()
+    .then((articles) => {
+      //console.log(articles);
+      response.status(200).send({ articles });
+    })
+    .catch((err) => {
+      // console.log(err);
+      next(err);
+    });
+};
+
+module.exports = { getTopics, getEndpoints, getArticleById, getArticles };
