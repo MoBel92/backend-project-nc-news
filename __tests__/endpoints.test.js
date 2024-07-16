@@ -4,6 +4,7 @@ const db = require("../db/connection.js");
 const data = require("../db/data/test-data");
 const app = require("../app.js");
 const endpoints = require("../endpoints.json");
+require("jest-extended");
 
 beforeEach(() => {
   return seed(data);
@@ -91,7 +92,7 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles", () => {
-  test("200 status and responds with an array of article objects with added coment count property and without body property  ", () => {
+  test("200 status and responds with an array of article objects and with added comment_count property and without body property  ", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -110,6 +111,17 @@ describe("GET /api/articles", () => {
           expect(article).toHaveProperty("article_img_url");
           expect(article).toHaveProperty("comment_count");
           expect(article).not.toHaveProperty("body");
+        });
+      });
+  });
+
+  test("200: responds with an array of articles objects sorted by created_at in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", {
+          descending: true,
         });
       });
   });
