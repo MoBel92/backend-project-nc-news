@@ -71,12 +71,11 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 
-  test.only("400: responds with an error message when article_id is not valid", () => {
+  test("400: responds with an error message when article_id is not valid", () => {
     return request(app)
       .get("/api/articles/not-a-number")
       .expect(400)
       .then((response) => {
-        console.log(response.body);
         expect(response.body.message).toBe("Invalid article ID");
       });
   });
