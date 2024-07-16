@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { checkIfArticleExists } = require("../db/data/utils_data");
 
 const fetchTopics = () => {
   return db.query("SELECT * FROM topics;").then(({ rows }) => {
@@ -29,9 +30,33 @@ const fetchArticles = () => {
     ORDER BY articles.created_at DESC;`
     )
     .then(({ rows }) => {
-      //console.log(rows);
       return rows;
     });
 };
 
-module.exports = { fetchTopics, fetchArticleById, fetchArticles };
+const fetchCommentsByArticleId = (article_id) => {
+  return checkIfArticleExists(article_id).then((article) => {
+    if (!article) {
+      return Promise.reject({ status: 404, msg: "Article not found" });
+    }
+
+    return db
+      .query(
+        `SELECT comment_id, votes, created_at, author, body, article_id 
+         FROM comments 
+         WHERE article_id = $1 
+         ORDER BY created_at DESC`,
+        [article_id]
+      )
+      .then(({ rows }) => {
+        return rows;
+      });
+  });
+};
+
+module.exports = {
+  fetchTopics,
+  fetchArticleById,
+  fetchArticles,
+  fetchCommentsByArticleId,
+};
