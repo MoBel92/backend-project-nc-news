@@ -1,6 +1,6 @@
 {
   "GET /api": {
-    "description": "Serves up a json representation of all the available endpoints of the API"
+    "description": "Serves up a JSON representation of all the available endpoints of the API"
   },
   "GET /api/topics": {
     "description": "Serves an array of all topics",
@@ -71,6 +71,49 @@
     "errorResponses": {
       "400": "Invalid article ID",
       "404": "Article not found"
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Update an article's votes",
+    "requestBody": {
+      "inc_votes": "number"
+    },
+    "response": {
+      "article": {
+        "article_id": "number",
+        "title": "string",
+        "body": "string",
+        "votes": "number",
+        "author": "string",
+        "topic": "string",
+        "created_at": "string",
+        "article_img_url": "string"
+      }
+    },
+    "errorResponses": {
+      "400": "Bad request: inc_votes must be a number",
+      "404": "Article not found"
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Add a comment to a specific article by ID",
+    "requestBody": {
+      "username": "string",
+      "body": "string"
+    },
+    "response": {
+      "comment": {
+        "comment_id": "number",
+        "body": "string",
+        "article_id": "number",
+        "author": "string",
+        "votes": "number",
+        "created_at": "string"
+      }
+    },
+    "errorResponses": {
+      "400": "Bad request: Missing required fields",
+      "404": "Article not found or User not found"
     }
   }
 }

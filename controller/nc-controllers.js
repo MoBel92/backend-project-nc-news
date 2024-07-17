@@ -4,6 +4,8 @@ const {
   fetchArticles,
   fetchCommentsByArticleId,
   addComment,
+  updateArticleById,
+  removeComment,
 } = require("../model/nc-models");
 
 const fs = require("fs").promises;
@@ -80,6 +82,36 @@ const postCommentForArticle = (req, res, next) => {
     });
 };
 
+const updateArticleVotes = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  if (inc_votes === undefined) {
+    return res.status(400).send({ msg: "inc_votes is required" });
+  }
+
+  updateArticleById(article_id, inc_votes)
+    .then((updatedArticle) => {
+      res.status(200).send({ article: updatedArticle });
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+};
+
+const deleteComment = (req, res, next) => {
+  const { comment_id } = req.params;
+
+  removeComment(comment_id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getTopics,
   getEndpoints,
@@ -87,4 +119,6 @@ module.exports = {
   getArticles,
   getCommentsByArticleId,
   postCommentForArticle,
+  updateArticleVotes,
+  deleteComment,
 };

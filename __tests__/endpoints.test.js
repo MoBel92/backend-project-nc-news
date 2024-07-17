@@ -86,7 +86,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/not-a-number")
       .expect(400)
       .then((response) => {
-        expect(response.body.message).toBe("Invalid article ID");
+        expect(response.body.message).toBe("Bad request");
       });
   });
 });
@@ -186,7 +186,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/not-a-number/comments")
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).toBe("Invalid article ID");
+        expect(body.message).toBe("Bad request");
       });
   });
 });
@@ -306,7 +306,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).toBe("Invalid article ID");
+        expect(body.message).toBe("Bad request");
       });
   });
 });
@@ -375,7 +375,32 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(voteVar)
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).toBe("Invalid article ID");
+        expect(body.message).toBe("Bad request");
+      });
+  });
+});
+
+describe("DELETE", () => {
+  test("204: deletes a comment from the database b given a comment_id", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+
+  test("404: responds with an error message when given comment id does not exist", () => {
+    return request(app)
+      .delete("/api/comments/987")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+
+  test("400: responds with an error message when given invalid comment id", () => {
+    return request(app)
+      .delete("/api/comments/not-a-comment")
+      .expect(400)
+      .then(({ body }) => {
+        console.log(body.message);
+        expect(body.message).toBe("Bad request");
       });
   });
 });
