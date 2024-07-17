@@ -162,6 +162,15 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.comments).toBeSortedBy("created_at", { descending: true });
       });
   });
+  test("200: returns an empty array when there are no comments for the article", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.comments)).toBe(true);
+        expect(body.comments.length).toBe(0);
+      });
+  });
 
   test("404: responds with an error message when article_id does not exist", () => {
     return request(app)
@@ -205,9 +214,60 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 
+  test("201: ignores unnecessary properties", () => {
+    const newComment = {
+      username: "lurker",
+      body: "Love northcoders",
+      extraProperty: "This should be ignored",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual({
+          comment_id: expect.any(Number),
+          body: "Love northcoders",
+          article_id: 1,
+          author: "lurker",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+
+  test("400: responds with an error when username is missing", () => {
+    const newComment = {
+      body: "Love northcoders",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+
+  test("400: responds with an error when body is missing", () => {
+    const newComment = {
+      username: "lurker",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+
   test("404: responds with an error when article_id does not exist", () => {
     const newComment = {
-      username: "Mohamed Belhaj",
+      username: "lurker",
       body: "Love northcoders",
     };
 
@@ -220,9 +280,24 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 
+  test("404: responds with an error when username does not exist", () => {
+    const newComment = {
+      username: "MohamedBelhaj",
+      body: "Love northcoders",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("User not found");
+      });
+  });
+
   test("400: responds with an error when article_id is not valid", () => {
     const newComment = {
-      username: "Mohamed Belhaj",
+      username: "lurker",
       body: "Love northcoders",
     };
 

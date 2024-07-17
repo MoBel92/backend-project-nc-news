@@ -67,6 +67,10 @@ const postCommentForArticle = (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
 
+  if (!username || !body) {
+    return res.status(400).send({ msg: "Bad request" });
+  }
+
   addComment(article_id, username, body)
     .then((comment) => {
       res.status(201).send({ comment });
