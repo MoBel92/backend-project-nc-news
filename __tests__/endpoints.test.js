@@ -310,3 +310,72 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: responds with the updated article", () => {
+    const voteVar = { inc_votes: 1 };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(voteVar)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          body: "I find this existence challenging",
+          topic: "mitch",
+          author: "butter_bridge",
+          created_at: expect.any(String),
+          votes: 101,
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+
+  test("200: responds with the updated article when votes are decremented", () => {
+    const voteVar = { inc_votes: -100 };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(voteVar)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.votes).toBe(0);
+      });
+  });
+
+  test("400: responds with an error when inc_votes is missing", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("inc_votes is required");
+      });
+  });
+
+  test("404: responds with an error when article_id does not exist", () => {
+    const voteVar = { inc_votes: 1 };
+
+    return request(app)
+      .patch("/api/articles/999")
+      .send(voteVar)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article not found");
+      });
+  });
+
+  test("400: responds with an error when article_id is not valid", () => {
+    const voteVar = { inc_votes: 1 };
+
+    return request(app)
+      .patch("/api/articles/not-a-number")
+      .send(voteVar)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid article ID");
+      });
+  });
+});
