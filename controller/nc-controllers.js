@@ -6,6 +6,7 @@ const {
   addComment,
   updateArticleById,
   removeComment,
+  selectUsers,
 } = require("../model/nc-models");
 
 const fs = require("fs").promises;
@@ -95,7 +96,6 @@ const updateArticleVotes = (req, res, next) => {
       res.status(200).send({ article: updatedArticle });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
@@ -112,6 +112,19 @@ const deleteComment = (req, res, next) => {
     });
 };
 
+const getUsers = (req, res, next) => {
+  console.log("Received request to get users");
+  selectUsers()
+    .then((users) => {
+      console.log(users);
+      res.status(200).send({ users });
+    })
+    .catch((err) => {
+      console.error(err);
+      next(err);
+    });
+};
+
 module.exports = {
   getTopics,
   getEndpoints,
@@ -121,4 +134,5 @@ module.exports = {
   postCommentForArticle,
   updateArticleVotes,
   deleteComment,
+  getUsers,
 };

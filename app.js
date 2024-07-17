@@ -16,6 +16,7 @@ const {
   postCommentForArticle,
   updateArticleVotes,
   deleteComment,
+  getUsers,
 } = require("./controller/nc-controllers");
 
 app.use(express.json());
@@ -28,6 +29,7 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentForArticle);
 app.patch("/api/articles/:article_id", updateArticleVotes);
 app.delete("/api/comments/:comment_id", deleteComment);
+app.get("/api/users", getUsers);
 
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Not found" });

@@ -399,8 +399,23 @@ describe("DELETE", () => {
       .delete("/api/comments/not-a-comment")
       .expect(400)
       .then(({ body }) => {
-        console.log(body.message);
         expect(body.message).toBe("Bad request");
+      });
+  });
+});
+
+describe("GET /api/users", () => {
+  test("200: responds with an array of user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.users)).toBe(true);
+        body.users.forEach((user) => {
+          expect(user).toHaveProperty("username");
+          expect(user).toHaveProperty("name");
+          expect(user).toHaveProperty("avatar_url");
+        });
       });
   });
 });
