@@ -51,7 +51,7 @@
     }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "Gets all comments for a specific article by its ID",
+    "description": "Get all comments for a specific article by ID",
     "queries": [],
     "parameters": {
       "article_id": "The ID of the article to retrieve comments for (integer)"

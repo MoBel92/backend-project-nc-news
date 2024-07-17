@@ -12,4 +12,12 @@ const checkIfArticleExists = (article_id) => {
     });
 };
 
-module.exports = { checkIfArticleExists };
+const checkIfUserExists = (username) => {
+  return db
+    .query("SELECT * FROM users WHERE username = $1;", [username])
+    .then(({ rows }) => {
+      return rows.length > 0;
+    });
+};
+
+module.exports = { checkIfArticleExists, checkIfUserExists };

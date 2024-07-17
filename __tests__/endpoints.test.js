@@ -181,3 +181,57 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: responds with the posted comment", () => {
+    const newComment = {
+      username: "lurker",
+      body: "Love northcoders",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual({
+          comment_id: expect.any(Number),
+          body: "Love northcoders",
+          article_id: 1,
+          author: "lurker",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+
+  test("404: responds with an error when article_id does not exist", () => {
+    const newComment = {
+      username: "Mohamed Belhaj",
+      body: "Love northcoders",
+    };
+
+    return request(app)
+      .post("/api/articles/999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article not found");
+      });
+  });
+
+  test("400: responds with an error when article_id is not valid", () => {
+    const newComment = {
+      username: "Mohamed Belhaj",
+      body: "Love northcoders",
+    };
+
+    return request(app)
+      .post("/api/articles/not-a-number/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid article ID");
+      });
+  });
+});

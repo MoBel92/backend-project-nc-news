@@ -3,6 +3,7 @@ const {
   fetchArticleById,
   fetchArticles,
   fetchCommentsByArticleId,
+  addComment,
 } = require("../model/nc-models");
 
 const fs = require("fs").promises;
@@ -62,10 +63,24 @@ const getCommentsByArticleId = (request, response, next) => {
     });
 };
 
+const postCommentForArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+
+  addComment(article_id, username, body)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getTopics,
   getEndpoints,
   getArticleById,
   getArticles,
   getCommentsByArticleId,
+  postCommentForArticle,
 };

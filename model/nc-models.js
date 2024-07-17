@@ -1,5 +1,8 @@
 const db = require("../db/connection");
-const { checkIfArticleExists } = require("../db/data/utils_data");
+const {
+  checkIfArticleExists,
+  checkIfUserExists,
+} = require("../db/data/utils_data");
 
 const fetchTopics = () => {
   return db.query("SELECT * FROM topics;").then(({ rows }) => {
@@ -54,9 +57,36 @@ const fetchCommentsByArticleId = (article_id) => {
   });
 };
 
+const addComment = (article_id, username, body) => {
+  return checkIfArticleExists(article_id)
+    .then((article) => {
+      if (!article) {
+        return Promise.reject({ status: 404, msg: "Article not found" });
+      }
+
+      return checkIfUserExists(username);
+    })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject({ status: 404, msg: "User not found" });
+      }
+
+      return db.query(
+        `INSERT INTO comments (author, body, article_id)
+         VALUES ($1, $2, $3)
+         RETURNING *;`,
+        [username, body, article_id]
+      );
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
 module.exports = {
   fetchTopics,
   fetchArticleById,
   fetchArticles,
   fetchCommentsByArticleId,
+  addComment,
 };
