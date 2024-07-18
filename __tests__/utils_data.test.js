@@ -2,6 +2,7 @@ const {
   checkIfArticleExists,
   checkIfUserExists,
   checkTopicExists,
+  fetchCommentCount,
 } = require("../db/data/utils_data");
 const db = require("../db/connection");
 
@@ -48,6 +49,15 @@ describe("checkTopicExists", () => {
     const slug = "mohamed";
     return checkTopicExists(slug).then((result) => {
       expect(result).toBe(false);
+    });
+  });
+});
+
+describe("fetchCommentCount", () => {
+  test("should return the comment_count if of the the given article_id", () => {
+    const articleId = 1;
+    return fetchCommentCount(articleId).then((result) => {
+      expect(result).toEqual(11);
     });
   });
 });

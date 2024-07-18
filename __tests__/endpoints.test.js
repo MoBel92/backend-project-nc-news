@@ -76,8 +76,8 @@ describe("GET /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/9999847")
       .expect(404)
-      .then((response) => {
-        expect(response.body.msg).toBe("not found");
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
       });
   });
 
@@ -87,6 +87,21 @@ describe("GET /api/articles/:article_id", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.message).toBe("Bad request");
+      });
+  });
+  test("responds with article details including comment_count", () => {
+    return request(app)
+      .get(`/api/articles/1`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toHaveProperty("article_id");
+        expect(body.article).toHaveProperty("title");
+        expect(body.article).toHaveProperty("author");
+        expect(body.article).toHaveProperty("topic");
+        expect(body.article).toHaveProperty("created_at");
+        expect(body.article).toHaveProperty("votes");
+        expect(body.article).toHaveProperty("comment_count");
+        expect(typeof body.article.comment_count).toBe("number");
       });
   });
 });
