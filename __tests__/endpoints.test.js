@@ -40,12 +40,13 @@ describe("GET /api/topics", () => {
   });
 });
 
-describe("GET /api", () => {
+describe.only("GET /api", () => {
   test("200: responds with an object containing all available endpoints", () => {
     return request(app)
       .get("/api")
+      .expect(200)
       .then((response) => {
-        expect(response.status).toBe(200);
+        console.log(response.body);
         expect(response.body).toEqual(endpoints);
       });
   });

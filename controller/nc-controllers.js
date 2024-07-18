@@ -1,3 +1,4 @@
+const { nextTick } = require("process");
 const {
   fetchTopics,
   fetchArticleById,
@@ -31,7 +32,9 @@ const getEndpoints = (request, response, next) => {
       const endpoints = JSON.parse(data);
       response.status(200).send(endpoints);
     })
-    .catch(next);
+    .catch((err) => {
+      next(err);
+    });
 };
 
 const getArticleById = (req, res, next) => {
