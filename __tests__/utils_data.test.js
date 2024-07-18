@@ -1,6 +1,7 @@
 const {
   checkIfArticleExists,
   checkIfUserExists,
+  checkTopicExists,
 } = require("../db/data/utils_data");
 const db = require("../db/connection");
 
@@ -31,6 +32,21 @@ describe("checkIfUserExists", () => {
   test("should return false if the user doesnt exist", () => {
     const username = "mohamed";
     return checkIfUserExists(username).then((result) => {
+      expect(result).toBe(false);
+    });
+  });
+});
+
+describe("checkTopicExists", () => {
+  test("should return true if the topic is exist", () => {
+    const slug = "mitch";
+    return checkTopicExists(slug).then((result) => {
+      expect(result).toBe(true);
+    });
+  });
+  test("should return false if the topic doesnt exist", () => {
+    const slug = "mohamed";
+    return checkTopicExists(slug).then((result) => {
       expect(result).toBe(false);
     });
   });

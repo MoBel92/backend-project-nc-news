@@ -57,7 +57,7 @@ const fetchArticles = (topic, sort_by = "created_at", order = "desc") => {
 
   return db.query(queryStr, queryParams).then((data) => {
     if (data.rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "not found" });
+      return [];
     }
     return data.rows;
   });
