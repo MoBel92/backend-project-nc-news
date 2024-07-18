@@ -2,6 +2,7 @@ const db = require("../db/connection");
 const {
   checkIfArticleExists,
   checkIfUserExists,
+  fetchCommentCount,
 } = require("../db/data/utils_data");
 
 const fetchTopics = () => {
@@ -17,7 +18,13 @@ const fetchArticleById = (article_id) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "not found" });
       }
-      return rows[0];
+
+      const article = rows[0];
+
+      return fetchCommentCount(article_id).then((comment_count) => {
+        article.comment_count = parseInt(comment_count, 10);
+        return article;
+      });
     });
 };
 

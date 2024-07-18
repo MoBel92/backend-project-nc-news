@@ -27,4 +27,20 @@ const checkTopicExists = (topic) => {
       return rows.length > 0;
     });
 };
-module.exports = { checkIfArticleExists, checkIfUserExists, checkTopicExists };
+
+const fetchCommentCount = (article_id) => {
+  return db
+    .query(
+      "SELECT COUNT(comment_id)::INT AS comment_count FROM comments WHERE article_id = $1",
+      [article_id]
+    )
+    .then(({ rows }) => {
+      return rows[0].comment_count;
+    });
+};
+module.exports = {
+  checkIfArticleExists,
+  checkIfUserExists,
+  checkTopicExists,
+  fetchCommentCount,
+};

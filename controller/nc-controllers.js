@@ -7,6 +7,7 @@ const {
   updateArticleById,
   removeComment,
   selectUsers,
+  fetchCommentCount,
 } = require("../model/nc-models");
 
 const fs = require("fs").promises;
