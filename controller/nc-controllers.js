@@ -48,7 +48,6 @@ const getArticles = (request, response, next) => {
   const { topic, sort_by = "created_at", order = "desc" } = request.query;
   fetchArticles(topic, sort_by, order)
     .then((articles) => {
-      console.log(articles);
       response.status(200).send({ articles });
     })
     .catch((err) => {
@@ -115,13 +114,11 @@ const deleteComment = (req, res, next) => {
 };
 
 const getUsers = (req, res, next) => {
-  console.log("Received request to get users");
   selectUsers()
     .then((users) => {
       res.status(200).send({ users });
     })
     .catch((err) => {
-      console.error(err);
       next(err);
     });
 };

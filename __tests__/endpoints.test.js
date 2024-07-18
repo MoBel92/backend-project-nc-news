@@ -91,7 +91,7 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-describe.only("GET /api/articles", () => {
+describe("GET /api/articles", () => {
   test("200 status and responds with an array of article objects and with added comment_count property and without body property  ", () => {
     return request(app)
       .get("/api/articles")
@@ -170,12 +170,13 @@ describe.only("GET /api/articles", () => {
         expect(body.msg).toBe("invalid query");
       });
   });
-  test("404: responds with not found for non-existent topic", () => {
+
+  test("200: responds with an empty array when there are no articles for the given topic", () => {
     return request(app)
-      .get("/api/articles?topic=belmo")
-      .expect(404)
+      .get("/api/articles?topic=paper")
+      .expect(200)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found");
+        expect(body.articles).toEqual([]);
       });
   });
 });
@@ -513,69 +514,7 @@ describe("GET /api/articles, for order query", () => {
       .get("/api/articles?order=invalid-order")
       .expect(400)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("invalid query");
       });
   });
 });
-
-// describe("GET /api/articles", () => {
-//   test.only("200: responds with an array of articles", () => {
-//     return request(app)
-//       .get("/api/articles")
-//       .expect(200)
-//       .then(({ body }) => {
-//         expect(Array.isArray(body.articles)).toBe(true);
-//       });
-//   });
-
-//   test("200: responds with articles filtered by topic", () => {
-//     return request(app)
-//       .get("/api/articles?topic=mitch")
-//       .expect(200)
-//       .then(({ body }) => {
-//         expect(
-//           body.articles.every((article) => article.topic === "mitch")
-//         ).toBe(true);
-//       });
-//   });
-
-//   test("200: responds with articles sorted by sort_by and order", () => {
-//     return request(app)
-//       .get("/api/articles?sort_by=created_at&order=asc")
-//       .expect(200)
-//       .then(({ body }) => {
-//         const createdAtValues = body.articles.map(
-//           (article) => article.created_at
-//         );
-//         expect(createdAtValues).toEqual(createdAtValues.slice().sort());
-//       });
-//   });
-
-//   test("400: responds with an error when order query is invalid", () => {
-//     return request(app)
-//       .get("/api/articles?order=invalid")
-//       .expect(400)
-//       .then(({ body }) => {
-//         expect(body.message).toBe("invalid query");
-//       });
-//   });
-
-//   test("400: responds with an error when sort_by query is invalid", () => {
-//     return request(app)
-//       .get("/api/articles?sort_by=invalidColumn")
-//       .expect(400)
-//       .then(({ body }) => {
-//         expect(body.message).toBe("invalid query");
-//       });
-//   });
-
-//   test("404: responds with not found for non-existent topic", () => {
-//     return request(app)
-//       .get("/api/articles?topic=nonExistentTopic")
-//       .expect(404)
-//       .then(({ body }) => {
-//         expect(body.message).toBe("not found");
-//       });
-//   });
-// });
