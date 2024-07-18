@@ -15,32 +15,53 @@ const fetchArticleById = (article_id) => {
     .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "Article not found" });
+        return Promise.reject({ status: 404, msg: "not found" });
       }
       return rows[0];
     });
 };
 
-const fetchArticles = () => {
-  return db
-    .query(
-      `
+const fetchArticles = (sort_by = "created_at", order = "desc") => {
+  const validSortBy = [
+    "created_at",
+    "title",
+    "author",
+    "topic",
+    "votes",
+    "article_id",
+  ];
+  const validOrder = ["asc", "desc"];
+
+  if (!validSortBy.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "invalid query" });
+  }
+
+  if (!validOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: "invalid query" });
+  }
+
+  let queryStr = `
     SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
     COUNT(comments.comment_id) AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
     GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC;`
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+    ORDER BY ${sort_by} ${order}`;
+
+  return db.query(queryStr).then((data) => {
+    if (data.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "not found" });
+    }
+    return data.rows;
+  });
 };
+
+module.exports = { fetchArticles };
 
 const fetchCommentsByArticleId = (article_id) => {
   return checkIfArticleExists(article_id).then((article) => {
     if (!article) {
-      return Promise.reject({ status: 404, msg: "Article not found" });
+      return Promise.reject({ status: 404, msg: "not found" });
     }
 
     return db
@@ -61,14 +82,14 @@ const addComment = (article_id, username, body) => {
   return checkIfArticleExists(article_id)
     .then((article) => {
       if (!article) {
-        return Promise.reject({ status: 404, msg: "Article not found" });
+        return Promise.reject({ status: 404, msg: "not found" });
       }
 
       return checkIfUserExists(username);
     })
     .then((user) => {
       if (!user) {
-        return Promise.reject({ status: 404, msg: "User not found" });
+        return Promise.reject({ status: 404, msg: "not found" });
       }
 
       return db.query(
@@ -96,7 +117,7 @@ const updateArticleById = (article_id, inc_votes) => {
     })
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "Article not found" });
+        return Promise.reject({ status: 404, msg: "not found" });
       }
       return rows[0];
     });

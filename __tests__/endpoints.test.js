@@ -77,7 +77,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/9999847")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("Article not found");
+        expect(response.body.msg).toBe("not found");
       });
   });
 
@@ -177,7 +177,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/9999/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Article not found");
+        expect(body.msg).toBe("not found");
       });
   });
 
@@ -276,7 +276,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Article not found");
+        expect(body.msg).toBe("not found");
       });
   });
 
@@ -291,7 +291,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("User not found");
+        expect(body.msg).toBe("not found");
       });
   });
 
@@ -363,7 +363,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(voteVar)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Article not found");
+        expect(body.msg).toBe("not found");
       });
   });
 
@@ -416,6 +416,59 @@ describe("GET /api/users", () => {
           expect(user).toHaveProperty("name");
           expect(user).toHaveProperty("avatar_url");
         });
+      });
+  });
+});
+
+describe("GET /api/articles, for sort_by query", () => {
+  test("?sort_by= responds with array of articles ordered by the given sort_by query column, defaults to the created_at date", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test('400: responds with "invalid query" error message when given an invalid sort_by query', () => {
+    return request(app)
+      .get("/api/articles?sort_by=invalid-query")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid query");
+      });
+  });
+});
+
+describe("GET /api/articles, for order query", () => {
+  test("?order=desc responds with array of articles ordered by descending order of created_at date", () => {
+    return request(app)
+      .get("/api/articles?order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("?order=asc responds with array of articles ordered by ascending order of created_at date", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy("created_at", { descending: false });
+      });
+  });
+
+  test('400: responds with "invalid order" error message when given an invalid order query', () => {
+    return request(app)
+      .get("/api/articles?order=invalid-order")
+      .expect(400)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.msg).toBe("invalid query");
       });
   });
 });
