@@ -45,11 +45,13 @@ const getArticleById = (req, res, next) => {
 };
 
 const getArticles = (request, response, next) => {
-  fetchArticles()
+  const { sort_by, order } = request.query;
+  fetchArticles(sort_by, order)
     .then((articles) => {
       response.status(200).send({ articles });
     })
     .catch((err) => {
+      console.log(err);
       next(err);
     });
 };
@@ -116,7 +118,6 @@ const getUsers = (req, res, next) => {
   console.log("Received request to get users");
   selectUsers()
     .then((users) => {
-      console.log(users);
       res.status(200).send({ users });
     })
     .catch((err) => {
