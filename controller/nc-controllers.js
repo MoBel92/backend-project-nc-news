@@ -45,13 +45,13 @@ const getArticleById = (req, res, next) => {
 };
 
 const getArticles = (request, response, next) => {
-  const { sort_by, order } = request.query;
-  fetchArticles(sort_by, order)
+  const { topic, sort_by = "created_at", order = "desc" } = request.query;
+  fetchArticles(topic, sort_by, order)
     .then((articles) => {
+      console.log(articles);
       response.status(200).send({ articles });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
