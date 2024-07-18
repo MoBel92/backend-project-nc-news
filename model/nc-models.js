@@ -21,7 +21,7 @@ const fetchArticleById = (article_id) => {
     });
 };
 
-const fetchArticles = (sort_by = "created_at", order = "desc") => {
+const fetchArticles = (topic, sort_by = "created_at", order = "desc") => {
   const validSortBy = [
     "created_at",
     "title",
@@ -44,19 +44,24 @@ const fetchArticles = (sort_by = "created_at", order = "desc") => {
     SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
     COUNT(comments.comment_id) AS comment_count
     FROM articles
-    LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY ${sort_by} ${order}`;
+    LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
-  return db.query(queryStr).then((data) => {
+  const queryParams = [];
+
+  if (topic) {
+    queryStr += ` WHERE articles.topic = $1`;
+    queryParams.push(topic);
+  }
+
+  queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+
+  return db.query(queryStr, queryParams).then((data) => {
     if (data.rows.length === 0) {
       return Promise.reject({ status: 404, msg: "not found" });
     }
     return data.rows;
   });
 };
-
-module.exports = { fetchArticles };
 
 const fetchCommentsByArticleId = (article_id) => {
   return checkIfArticleExists(article_id).then((article) => {
