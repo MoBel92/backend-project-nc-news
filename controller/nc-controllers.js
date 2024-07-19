@@ -10,6 +10,7 @@ const {
   selectUsers,
   fetchCommentCount,
 } = require("../model/nc-models");
+const endpoints = require("../endpoints.json");
 
 const fs = require("fs").promises;
 
@@ -24,17 +25,7 @@ const getTopics = (request, response, next) => {
 };
 
 const getEndpoints = (request, response, next) => {
-  fs.readFile(
-    "/home/belmo/northcoders/backend-project/be-nc-news/endpoints.json",
-    "utf8"
-  )
-    .then((data) => {
-      const endpoints = JSON.parse(data);
-      response.status(200).send(endpoints);
-    })
-    .catch((err) => {
-      next(err);
-    });
+  response.status(200).send(endpoints);
 };
 
 const getArticleById = (req, res, next) => {
