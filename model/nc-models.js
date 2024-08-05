@@ -4,6 +4,7 @@ const {
   checkIfUserExists,
   fetchCommentCount,
 } = require("../db/data/utils_data");
+const { serverErrorHandler } = require("../error-handlers");
 
 const fetchTopics = () => {
   return db.query("SELECT * FROM topics;").then(({ rows }) => {
@@ -151,6 +152,18 @@ const selectUsers = () => {
     return rows;
   });
 };
+
+const fetchUsersByUsername = (username) => {
+  return db
+    .query(`SELECT * FROM users WHERE username = $1;`, [username])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
+      return rows[0];
+    });
+};
+
 module.exports = {
   fetchTopics,
   fetchArticleById,
@@ -160,4 +173,5 @@ module.exports = {
   updateArticleById,
   removeComment,
   selectUsers,
+  fetchUsersByUsername,
 };

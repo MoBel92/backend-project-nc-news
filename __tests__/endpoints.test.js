@@ -534,3 +534,41 @@ describe("GET /api/articles, for order query", () => {
       });
   });
 });
+
+describe("GET /api/users/:username", () => {
+  test("responds with 200 status and the user object requested by username", () => {
+    const username = "butter_bridge";
+    return request(app)
+      .get(`/api/users/${username}`)
+      .expect(200)
+      .then(({ body }) => {
+        //console.log(body);
+
+        expect(body.users.username).toBe("butter_bridge");
+        expect(body.users.name).toBe("jonny");
+        expect(body.users.avatar_url).toBe(
+          "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        );
+      });
+  });
+  test("respond 400 when i give him an invalid username , not string", () => {
+    const usernameparam = 1;
+    return request(app)
+      .get(`/api/users/${usernameparam}`)
+      .expect(400)
+      .then((response) => {
+        console.log(response.body.msg);
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("respond 404 when i give him a not exist username", () => {
+    const usernameparam1 = "Mohamed";
+    return request(app)
+      .get(`/api/users/${usernameparam1}`)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+});

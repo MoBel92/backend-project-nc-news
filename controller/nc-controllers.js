@@ -8,6 +8,7 @@ const {
   updateArticleById,
   removeComment,
   selectUsers,
+  fetchUsersByUsername,
   fetchCommentCount,
 } = require("../model/nc-models");
 const endpoints = require("../endpoints.json");
@@ -117,7 +118,25 @@ const getUsers = (req, res, next) => {
       next(err);
     });
 };
+const getUserByUsername = (req, res, next) => {
+  const { username } = req.params;
 
+  if (typeof username !== "string") {
+    return res.status(400).send({ message: "Bad request" });
+  }
+
+  //console.log(username);
+
+  fetchUsersByUsername(username)
+    .then((users) => {
+      //console.log(users);
+      res.status(200).send({ users });
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+};
 module.exports = {
   getTopics,
   getEndpoints,
@@ -128,4 +147,5 @@ module.exports = {
   updateArticleVotes,
   deleteComment,
   getUsers,
+  getUserByUsername,
 };
