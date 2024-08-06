@@ -164,6 +164,15 @@ const fetchUsersByUsername = (username) => {
     });
 };
 
+const modifyCommentById = (comment_id, body) => {
+  return db
+    .query("UPDATE comments SET body = $1 WHERE comment_id = $2 RETURNING *;", [
+      body,
+      comment_id,
+    ])
+    .then((result) => result.rows[0]);
+};
+
 module.exports = {
   fetchTopics,
   fetchArticleById,
@@ -174,4 +183,5 @@ module.exports = {
   removeComment,
   selectUsers,
   fetchUsersByUsername,
+  modifyCommentById,
 };

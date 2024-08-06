@@ -1,4 +1,3 @@
-const { nextTick } = require("process");
 const {
   fetchTopics,
   fetchArticleById,
@@ -10,6 +9,7 @@ const {
   selectUsers,
   fetchUsersByUsername,
   fetchCommentCount,
+  modifyCommentById,
 } = require("../model/nc-models");
 const endpoints = require("../endpoints.json");
 
@@ -133,6 +133,25 @@ const getUserByUsername = (req, res, next) => {
       next(err);
     });
 };
+
+const updateComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  const { body } = req.body; // Assuming you are updating the comment's text
+
+  if (!body) {
+    return res
+      .status(400)
+      .send({ msg: "Request body must contain 'body' field" });
+  }
+
+  modifyCommentById(comment_id, body)
+    .then((updatedComment) => {
+      res.status(200).send({ comment: updatedComment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 module.exports = {
   getTopics,
   getEndpoints,
@@ -144,4 +163,5 @@ module.exports = {
   deleteComment,
   getUsers,
   getUserByUsername,
+  updateComment,
 };

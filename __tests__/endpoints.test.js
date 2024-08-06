@@ -560,3 +560,56 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("200: responds with the updated comment when the comment is successfully updated", () => {
+    const update = { body: "Updated comment text" };
+
+    return request(app)
+      .patch("/api/comments/1")
+      .send(update)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toHaveProperty("comment_id", 1);
+        expect(body.comment).toHaveProperty("body", "Updated comment text");
+        expect(body.comment).toHaveProperty("votes");
+        expect(body.comment).toHaveProperty("created_at");
+        expect(body.comment).toHaveProperty("author");
+        expect(body.comment).toHaveProperty("article_id");
+      });
+  });
+
+  test("400: responds with an error when the comment_id is invalid", () => {
+    const update = { body: "Updated comment text" };
+
+    return request(app)
+      .patch("/api/comments/not-a-number")
+      .send(update)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+
+  test("400: responds with an error when the request body does not contain 'body' field", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Request body must contain 'body' field");
+      });
+  });
+
+  test("404: responds with an error message for invalid route", () => {
+    const update = { body: "Updated comment text" };
+
+    return request(app)
+      .patch("/api/invalid-route/1")
+      .send(update)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
+});
