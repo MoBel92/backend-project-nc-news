@@ -121,10 +121,6 @@ const getUsers = (req, res, next) => {
 const getUserByUsername = (req, res, next) => {
   const { username } = req.params;
 
-  if (typeof username !== "string") {
-    return res.status(400).send({ message: "Bad request" });
-  }
-
   //console.log(username);
 
   fetchUsersByUsername(username)

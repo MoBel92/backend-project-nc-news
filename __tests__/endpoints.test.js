@@ -542,23 +542,11 @@ describe("GET /api/users/:username", () => {
       .get(`/api/users/${username}`)
       .expect(200)
       .then(({ body }) => {
-        //console.log(body);
-
         expect(body.users.username).toBe("butter_bridge");
         expect(body.users.name).toBe("jonny");
         expect(body.users.avatar_url).toBe(
           "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
         );
-      });
-  });
-  test("respond 400 when i give him an invalid username , not string", () => {
-    const usernameparam = 1;
-    return request(app)
-      .get(`/api/users/${usernameparam}`)
-      .expect(400)
-      .then((response) => {
-        console.log(response.body.msg);
-        expect(response.body.msg).toBe("Bad request");
       });
   });
 
