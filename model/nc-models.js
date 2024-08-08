@@ -37,6 +37,7 @@ const fetchArticles = (topic, sort_by = "created_at", order = "desc") => {
     "topic",
     "votes",
     "article_id",
+    "comment_count",
   ];
   const validOrder = ["asc", "desc"];
 
@@ -61,7 +62,11 @@ const fetchArticles = (topic, sort_by = "created_at", order = "desc") => {
     queryParams.push(topic);
   }
 
-  queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+  if (sort_by === "comment_count") {
+    queryStr += ` GROUP BY articles.article_id ORDER BY comment_count ${order}`;
+  } else {
+    queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+  }
 
   return db.query(queryStr, queryParams).then((data) => {
     if (data.rows.length === 0) {
